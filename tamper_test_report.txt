@@ -1,0 +1,3 @@
+NEGATIVE TEST - AES-GCM TAG
+A valid packet using the firmware packet layout was created and one ciphertext byte was flipped.
+EXPECTED: tampered payload rejected by GCM authentication tag

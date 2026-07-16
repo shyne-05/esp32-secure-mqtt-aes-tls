@@ -1,0 +1,6 @@
+CERTIFICATE METADATA (private key omitted)
+subject=C=VN, ST=HCM, L=HCM, O=DoAnDTVT, CN=172.20.10.6
+issuer=C=VN, ST=HCM, L=HCM, O=DoAnDTVT, CN=MyMQTT-CA
+notBefore=Jul 11 08:41:51 2026 GMT
+notAfter=Jul  8 08:41:51 2036 GMT
+SHA1 Fingerprint=B5:3F:16:7F:EA:4F:17:4F:6D:80:28:A4:10:DB:97:1F:9C:AC:9A:41

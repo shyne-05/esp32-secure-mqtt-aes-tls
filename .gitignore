@@ -1,0 +1,28 @@
+# ==========================================
+# ESP-IDF Git Ignore List
+# ==========================================
+**/build/
+**/sdkconfig
+**/sdkconfig.old
+**/.idf/
+
+# Python cache & virtual environments
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+.venv/
+venv/
+ENV/
+
+# Microsoft Office temporary files
+~$*.docx
+
+# Local testing and data output (optional to ignore, recommended)
+*.csv
+*.png
+*.log
+.tools/
+**/*.log
+**/*.err
+**/previous_run_*
