@@ -327,6 +327,35 @@ Câu trả lời:
 
 ## 5. Cách giải thích số liệu
 
+### 5.0. Đánh giá overhead CPU, RAM và latency theo đúng đề tài
+
+Đây là phần trả lời trực tiếp cho mục tiêu đánh giá của đề tài. Nhóm so sánh Stage 1 không mã hóa với Stage 2 dùng AES-GCM, Stage 3 dùng TLS và Stage 4 kết hợp AES-GCM với TLS. Các chỉ số được lấy từ firmware ESP32-S3, listener và các file CSV sau mỗi lần chạy.
+
+| Chỉ số | Cách đo | Ý nghĩa |
+|---|---|---|
+| Payload size | Kích thước payload listener nhận/xử lý | Đo overhead dữ liệu do AES-GCM/Base64 |
+| CPU | Trường `cpu_pct` trong firmware | Đo tỷ lệ thời gian CPU hoạt động trong chu kỳ |
+| RAM | Trường `heap` còn tự do | Đo bộ nhớ còn lại sau khi kích hoạt bảo mật |
+| AES latency | Trường `enc_us` | Thời gian mã hóa payload bằng microsecond |
+| TLS latency | Trường `tls_ms` | Thời gian thiết lập phiên TLS bằng millisecond |
+| Publish latency | Thời gian từ tạo payload đến publish/nhận | Đánh giá độ trễ truyền dữ liệu nếu có mốc đo tương ứng |
+
+Kết quả hiện có cho thấy:
+
+- Payload tăng từ **94 B ở Stage 1** lên **168 B ở Stage 2/4**, tương đương khoảng **78,7%**.
+- Heap trung bình giảm từ khoảng **265.220 B ở Stage 1** xuống **227.896 B ở Stage 3**, giảm **37.324 B**, tương đương khoảng **36,45 KB**.
+- AES latency trung bình là **530,3 µs ở Stage 2** và **491,7 µs ở Stage 4**.
+- TLS handshake latency trung bình là **755 ms ở Stage 3** và **757 ms ở Stage 4**.
+- CPU đo được khoảng **0,2% ở Stage 1/3** và **0,3% ở Stage 2/4** trong chu kỳ gửi 10 giây.
+
+Khi thầy hỏi về latency, cần phân biệt hai loại. `enc_us` là latency xử lý mã hóa payload. `tls_ms` là latency thiết lập kết nối TLS, thường chỉ xuất hiện khi kết nối được tạo hoặc kết nối lại. Đây chưa phải latency end-to-end cho từng bản tin publish. Nếu muốn đánh giá publish latency đầy đủ, cần thêm timestamp ở thời điểm ESP32 tạo bản tin và timestamp ở listener nhận bản tin, sau đó tính hiệu `t_receive - t_create` cho từng message.
+
+Về thuật ngữ **end-to-end encryption**, trong thiết kế này AES-GCM là lớp gần với mã hóa đầu cuối giữa ESP32 và listener vì payload vẫn được mã hóa khi đi qua broker. TLS bảo vệ kênh kết nối giữa các endpoint TLS; TLS không tự bảo vệ payload sau khi broker kết thúc phiên TLS. Vì vậy khi bảo vệ, nên nói chính xác: “AES-GCM bảo vệ nội dung payload theo hướng đầu cuối trong pipeline của đồ án, còn TLS bảo vệ kênh truyền MQTT.”
+
+**Câu trả lời mẫu:**
+
+> Nhóm đánh giá overhead ở ba khía cạnh: CPU, RAM và latency. CPU được biểu diễn bằng `cpu_pct`, RAM bằng heap còn tự do, AES latency bằng `enc_us`, còn TLS latency bằng `tls_ms`. So với baseline, AES-GCM làm payload tăng khoảng 78,7% và thêm khoảng 530 microsecond xử lý; TLS làm heap giảm khoảng 36,45 KB và tạo handshake khoảng 755–757 millisecond. Vì handshake chỉ xảy ra khi thiết lập hoặc kết nối lại, nó không cộng lại vào mỗi chu kỳ publish 10 giây khi kết nối được duy trì.
+
 ### Payload
 
 Baseline là 94 B. AES-GCM làm payload tăng lên 168 B, tương đương tăng khoảng:

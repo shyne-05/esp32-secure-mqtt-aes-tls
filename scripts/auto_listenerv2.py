@@ -263,6 +263,10 @@ def on_message(client, userdata, msg):
                 f"- Kênh bao mat: Khong su dung TLS\n"
             )
 
+        payload_show = raw_payload
+        if len(raw_payload) > 35:
+            payload_show = raw_payload[:35] + "..."
+
         telegram_text = (
             f"<b>[BAO CAO THU THAP DU LIEU GOI TIN MQTT]</b>\n"
             f"==========================================\n"
@@ -271,6 +275,7 @@ def on_message(client, userdata, msg):
             f"<b>1. THONG TIN CHUNG:</b>\n"
             f"- Topic MQTT: <code>{msg.topic}</code>\n"
             f"- So thu tu (Msg ID): <code>{msg_id}</code>\n"
+            f"- Payload goc: <code>{payload_show}</code>\n"
             f"- Kich thuoc goi tin tho: {raw_size} bytes\n"
             f"- Kich thuoc sau khi giai ma: {len(plaintext)} bytes\n\n"
             f"<b>2. DU LIEU CAM BIEN:</b>\n"
