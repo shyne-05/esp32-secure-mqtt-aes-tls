@@ -2,8 +2,8 @@ import os
 import sys
 import pandas as pd
 
-SUMMARY_CSV = r"c:\doan2\comparison_summary.csv"
-CHARTS_PNG = r"c:\doan2\comparison_charts.png"
+SUMMARY_CSV = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "comparison_summary.csv"))
+CHARTS_PNG = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "comparison_charts.png"))
 
 def show_presentation_data():
     print("=" * 85)

@@ -230,9 +230,11 @@ def on_message(client, userdata, msg):
 
         print(f"Parsed data : ID={msg_id} | Temp={temp}C | Humid={humid}% | CPU={cpu_pct}% | TLS={tls_ms}ms")
 
-        # Save to CSV
+        # Save to CSV in data directory
         import os
-        csv_filename = f"log_stage{stage}.csv"
+        data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data"))
+        os.makedirs(data_dir, exist_ok=True)
+        csv_filename = os.path.join(data_dir, f"log_stage{stage}.csv")
         file_exists = os.path.exists(csv_filename)
         with open(csv_filename, "a", encoding="utf-8") as f:
             if not file_exists:

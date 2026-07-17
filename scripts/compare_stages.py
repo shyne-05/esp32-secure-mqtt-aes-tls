@@ -20,8 +20,9 @@ stages = {
 
 def load_data():
     data = {}
+    data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data"))
     for stage_id, info in stages.items():
-        filename = info["file"]
+        filename = os.path.join(data_dir, info["file"])
         if os.path.exists(filename):
             try:
                 df = pd.read_csv(filename)
@@ -100,8 +101,11 @@ def analyze():
 
     # Save to CSV
     summary_df = pd.DataFrame(summary_rows)
-    summary_df.to_csv("comparison_summary.csv", index=False)
-    print("\n[OK] Saved comparison summary to comparison_summary.csv")
+    data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data"))
+    os.makedirs(data_dir, exist_ok=True)
+    summary_path = os.path.join(data_dir, "comparison_summary.csv")
+    summary_df.to_csv(summary_path, index=False)
+    print(f"\n[OK] Saved comparison summary to {summary_path}")
 
     # Print Summary Table
     print("\n" + "="*80)
@@ -201,8 +205,11 @@ def analyze():
         ax.text(bar.get_x() + bar.get_width()/2, yval + 0.5, f"{yval:.2f} KB", ha='center', va='bottom', fontsize=9, fontweight='bold')
 
     plt.tight_layout(rect=[0, 0, 1, 0.96])
-    plt.savefig("comparison_charts.png", dpi=300)
-    print("[OK] Saved comparison charts to comparison_charts.png")
+    data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data"))
+    os.makedirs(data_dir, exist_ok=True)
+    charts_path = os.path.join(data_dir, "comparison_charts.png")
+    plt.savefig(charts_path, dpi=300)
+    print(f"[OK] Saved comparison charts to {charts_path}")
     plt.close()
 
     # Send photo to Telegram
@@ -211,7 +218,7 @@ def analyze():
         "- Do an: Application of AES-256 and TLS 1.3 on ESP32-S3\n"
         "- Cap nhat tu dong tu ket qua thuc te."
     )
-    send_telegram_photo("comparison_charts.png", caption)
+    send_telegram_photo(charts_path, caption)
 
 def send_telegram_photo(photo_path: str, caption: str):
     token = "8651731453:AAGaiFXEXeH45CDuM0FYSKjds4JizCqcaEg"
